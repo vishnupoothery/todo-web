@@ -1,8 +1,8 @@
 import Todo from './Todo';
 
-const Todos = ({ todos }) => {
+const Todos = ({ todos, deleteTodo }) => {
     return <>
-        {todos.map(todo => <Todo key={todo.id} todo={todo} />)}
+        {todos.map(todo => <Todo key={todo.id} todo={todo} deleteTodo={deleteTodo}/>)}
     </>;
 };
 

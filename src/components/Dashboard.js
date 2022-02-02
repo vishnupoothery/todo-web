@@ -25,10 +25,16 @@ const Dashboard = () => {
     console.log(todos)
   }
 
+  const deleteTodo = async (id) => {
+    const todo = doc(todoCollectionRef, id);
+    await deleteDoc(todo);
+    setTodos(todos.filter(todo => todo.id !== id));
+  }
+
   const addTodo = async (todo) => {
     const newTodo = { ...todo, user: user.uid };
     const doc = await addDoc(todoCollectionRef, newTodo);
-    const newTodos = [...todos, { ...newTodo, id: doc.id }];
+    const newTodos = [{ ...newTodo, id: doc.id }, ...todos,];
     setTodos(newTodos);
   }
 
@@ -52,7 +58,7 @@ const Dashboard = () => {
     </Container> */}
 
     <AddTodo addTodo={addTodo} />
-    <Todos todos={todos} />
+    <Todos todos={todos} deleteTodo={deleteTodo} />
   </div>;
 };
 
