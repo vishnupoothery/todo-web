@@ -1,4 +1,3 @@
-import Button from 'react-bootstrap/Button';
 import { RiDeleteBinLine } from 'react-icons/ri';
 
 const Todo = ({ todo, deleteTodo, checkTodo }) => {

@@ -10,6 +10,7 @@ import Todos from './Todos';
 import AddTodo from './AddTodo';
 import '../styles/Dashboard.css';
 import SideNav from './SideNav';
+import { SideMenu } from './SideMenu';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -44,7 +45,6 @@ const Dashboard = () => {
       list.push({ ...doc.data(), id: doc.id });
     });
     setList(list);
-    console.log(list)
   }
 
   const deleteTodo = async (id) => {
@@ -71,7 +71,7 @@ const Dashboard = () => {
   }, []);
 
   const openNav = () => {
-    document.getElementById("mySidenav").style.width = "250px";
+    document.getElementById("mySidenav").style.width = "300px";
   }
 
   const closeNav = () => {
@@ -79,36 +79,22 @@ const Dashboard = () => {
   }
 
   return <Container>
-    <SideNav closeNav={closeNav} />
-    <h1 style={{ textAlign: "center" }}>Welcome {user.displayName}</h1>
+    <SideNav closeNav={closeNav} defList={list} userList={list} logout={logout} />
     <span className='mobileShow' onClick={openNav}>open</span>
     <div style={{ textAlign: "right" }}>
-      <button onClick={logout}>logout</button>
     </div>
-
-    {/* <Container>
-      <Row>
-        <Col>1 of 2</Col>
-        <Col>2 of 2</Col>
-      </Row>
-      <Row>
-        <Col>1 of 3</Col>
-        <Col>2 of 3</Col>
-        <Col>3 of 3</Col>
-      </Row>
-    </Container> */}
     <div className="row">
-      <div className="col-3">Hello</div>
+      <div className="col-3 d-none d-sm-block d-md-block">
+        <SideMenu defList={list} userList={list} logout={logout} />
+      </div>
       <div className="col-sm-12 col-md-9">
         <div id="main">
           <AddTodo addTodo={addTodo} />
-          <Todos todos={todos} deleteTodo={deleteTodo} checkTodo={checkTodo} />
+          <Todos title="Todo List" todos={todos} deleteTodo={deleteTodo} checkTodo={checkTodo} />
           <Todos todos={checkedTodos} deleteTodo={deleteTodo} checkTodo={checkTodo} />
         </div>
       </div>
     </div>
-
-
   </Container>;
 };
 

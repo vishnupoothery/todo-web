@@ -3,7 +3,6 @@ import { useState } from "react";
 const AddTodo = ({addTodo}) => {
     const [value, setValue] = useState('');
     const handleOnClick = () => {
-        console.log(value);
         const todo = {
             "value": value,
             "created_date": new Date(),

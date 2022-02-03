@@ -1,15 +1,10 @@
-import { useAuth } from "../context/UserContext";
+import { SideMenu } from "./SideMenu";
 
-const SideNav = ({closeNav}) => {
-    const { user} = useAuth();
+const SideNav = ({closeNav,defList,userList,logout}) => {
     return <>
-        <div id="mySidenav" className="sidenav">
+        <div id="mySidenav" className="sidenav shadow">
             <span className="closebtn" onClick={closeNav}>&times;</span>
-            <p style={{color:"white"}}>{user.displayName}</p>
-            <a href="#">About</a>
-            <a href="#">Services</a>
-            <a href="#">Clients</a>
-            <a href="#">Contact</a>
+            <div className="p-3 pt-0"><SideMenu defList={defList} userList={userList} logout={logout} /></div>
         </div>
     </>;
 };
