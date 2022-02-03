@@ -14,16 +14,24 @@ import SideNav from './SideNav';
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const [todos, setTodos] = useState([]);
+  const [checkedTodos, setCheckedTodos] = useState([]);
   const todoCollectionRef = collection(db, "todos");
 
   const getTodos = async () => {
     const q = query(todoCollectionRef, where("user", "==", user.uid), orderBy("created_date", "desc"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const _todos = [];
+      const _checkedTodos = [];
       querySnapshot.forEach((doc) => {
-        _todos.push({ ...doc.data(), id: doc.id });
+        if(!doc.data().checked){
+          _todos.push({ ...doc.data(), id: doc.id });
+        }else{
+          _checkedTodos.push({ ...doc.data(), id: doc.id });
+        }
+        
       });
       setTodos(_todos);
+      setCheckedTodos(_checkedTodos);
     });
     // const data = await getDocs(q);
     // let todos = [];
@@ -47,9 +55,10 @@ const Dashboard = () => {
     // setTodos(newTodos);
   }
 
-  const checkTodo = async (id) => {
-    const todo = doc(todoCollectionRef, id);
-    const newFields = { "checked": !todos.find(todo => todo.id === id).checked };
+  const checkTodo = async (_todo) => {
+    const todo = doc(todoCollectionRef, _todo.id);
+    const checked = _todo.checked;
+    const newFields = { "checked": !checked };
     await updateDoc(todo, newFields);
     // setTodos(todos.map(todo => todo.id === id ? { ...todo, ...newFields } : todo));
   }
@@ -86,6 +95,7 @@ const Dashboard = () => {
     <div id="main">
       <AddTodo addTodo={addTodo} />
       <Todos todos={todos} deleteTodo={deleteTodo} checkTodo={checkTodo} />
+      <Todos todos={checkedTodos} deleteTodo={deleteTodo} checkTodo={checkTodo} />
     </div>
   </div>;
 };

@@ -10,7 +10,7 @@ const Todo = ({ todo, deleteTodo, checkTodo }) => {
     }
     return <>
         <div style={{padding:"2px"}}>
-            <input type={todo.checked ? "checkbox" : "checkbox"} checked={todo.checked} onChange={() => {checkTodo(todo.id)}}></input>
+            <input type={todo.checked ? "checkbox" : "checkbox"} checked={todo.checked} onChange={() => {checkTodo(todo)}}></input>
             <span> {todo.value} </span>
             <RiDeleteBinLine style={{color:"red"}} onClick={() => handleDelete(todo.id)} />
         </div>
