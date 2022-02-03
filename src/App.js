@@ -9,7 +9,6 @@ function App() {
 
   return (
       <div className="App">
-        {console.log(user)}
         {!user ? <Login /> : <Dashboard/>}
     </div>
   );

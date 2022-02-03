@@ -8,6 +8,8 @@ import { addDoc, collection, getDocs, updateDoc, doc, deleteDoc, query, where, o
 import { db } from '../config/firebase';
 import Todos from './Todos';
 import AddTodo from './AddTodo';
+import '../styles/Dashboard.css';
+import SideNav from './SideNav';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -15,11 +17,11 @@ const Dashboard = () => {
   const todoCollectionRef = collection(db, "todos");
 
   const getTodos = async () => {
-    const q = query(todoCollectionRef, where("user", "==", user.uid),orderBy("created_date", "desc"));
+    const q = query(todoCollectionRef, where("user", "==", user.uid), orderBy("created_date", "desc"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const _todos = [];
       querySnapshot.forEach((doc) => {
-          _todos.push({ ...doc.data(), id: doc.id });
+        _todos.push({ ...doc.data(), id: doc.id });
       });
       setTodos(_todos);
     });
@@ -29,6 +31,7 @@ const Dashboard = () => {
     //   todos.push({ ...doc.data(), id: doc.id });
     // });
     // setTodos(todos);
+    // unsubscribe();
   }
 
   const deleteTodo = async (id) => {
@@ -46,7 +49,7 @@ const Dashboard = () => {
 
   const checkTodo = async (id) => {
     const todo = doc(todoCollectionRef, id);
-    const newFields = {"checked" : !todos.find(todo => todo.id === id).checked};
+    const newFields = { "checked": !todos.find(todo => todo.id === id).checked };
     await updateDoc(todo, newFields);
     // setTodos(todos.map(todo => todo.id === id ? { ...todo, ...newFields } : todo));
   }
@@ -55,8 +58,18 @@ const Dashboard = () => {
     getTodos();
   }, []);
 
+  const openNav = () => {
+    document.getElementById("mySidenav").style.width = "250px";
+  }
+
+  const closeNav = () => {
+    document.getElementById("mySidenav").style.width = "0";
+  }
+
   return <div>
+    <SideNav closeNav={closeNav} />
     <h1>Welcome {user.displayName}</h1>
+    <span onClick={openNav}>open</span>
     <button onClick={logout}>logout</button>
     {/* <Container>
       <Row>
@@ -70,8 +83,10 @@ const Dashboard = () => {
       </Row>
     </Container> */}
 
-    <AddTodo addTodo={addTodo} />
-    <Todos todos={todos} deleteTodo={deleteTodo} checkTodo={checkTodo} />
+    <div id="main">
+      <AddTodo addTodo={addTodo} />
+      <Todos todos={todos} deleteTodo={deleteTodo} checkTodo={checkTodo} />
+    </div>
   </div>;
 };
 
