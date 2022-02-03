@@ -15,7 +15,9 @@ const Dashboard = () => {
   const { user, logout } = useAuth();
   const [todos, setTodos] = useState([]);
   const [checkedTodos, setCheckedTodos] = useState([]);
+  const [list, setList] = useState([]);
   const todoCollectionRef = collection(db, "todos");
+  const listRef = collection(db, "stdListRef");
 
   const getTodos = async () => {
     const q = query(todoCollectionRef, where("user", "==", user.uid), orderBy("created_date", "desc"));
@@ -23,36 +25,37 @@ const Dashboard = () => {
       const _todos = [];
       const _checkedTodos = [];
       querySnapshot.forEach((doc) => {
-        if(!doc.data().checked){
+        if (!doc.data().checked) {
           _todos.push({ ...doc.data(), id: doc.id });
-        }else{
+        } else {
           _checkedTodos.push({ ...doc.data(), id: doc.id });
         }
-        
       });
       setTodos(_todos);
       setCheckedTodos(_checkedTodos);
     });
-    // const data = await getDocs(q);
-    // let todos = [];
-    // data.forEach((doc) => {
-    //   todos.push({ ...doc.data(), id: doc.id });
-    // });
-    // setTodos(todos);
-    // unsubscribe();
+  }
+
+  const getList = async () => {
+    const q = query(listRef, where("activeFlag", "==", true));
+    const data = await getDocs(q);
+    let list = [];
+    data.forEach(doc => {
+      list.push({ ...doc.data(), id: doc.id });
+    });
+    setList(list);
+    console.log(list)
   }
 
   const deleteTodo = async (id) => {
     const todo = doc(todoCollectionRef, id);
     await deleteDoc(todo);
-    // setTodos(todos.filter(todo => todo.id !== id));
   }
 
   const addTodo = async (todo) => {
     const newTodo = { ...todo, user: user.uid };
     const doc = await addDoc(todoCollectionRef, newTodo);
     const newTodos = [{ ...newTodo, id: doc.id }, ...todos,];
-    // setTodos(newTodos);
   }
 
   const checkTodo = async (_todo) => {
@@ -60,11 +63,11 @@ const Dashboard = () => {
     const checked = _todo.checked;
     const newFields = { "checked": !checked };
     await updateDoc(todo, newFields);
-    // setTodos(todos.map(todo => todo.id === id ? { ...todo, ...newFields } : todo));
   }
 
   useEffect(() => {
     getTodos();
+    getList();
   }, []);
 
   const openNav = () => {
@@ -75,11 +78,14 @@ const Dashboard = () => {
     document.getElementById("mySidenav").style.width = "0";
   }
 
-  return <div>
+  return <Container>
     <SideNav closeNav={closeNav} />
-    <h1>Welcome {user.displayName}</h1>
-    <span onClick={openNav}>open</span>
-    <button onClick={logout}>logout</button>
+    <h1 style={{ textAlign: "center" }}>Welcome {user.displayName}</h1>
+    <span className='mobileShow' onClick={openNav}>open</span>
+    <div style={{ textAlign: "right" }}>
+      <button onClick={logout}>logout</button>
+    </div>
+
     {/* <Container>
       <Row>
         <Col>1 of 2</Col>
@@ -91,13 +97,19 @@ const Dashboard = () => {
         <Col>3 of 3</Col>
       </Row>
     </Container> */}
-
-    <div id="main">
-      <AddTodo addTodo={addTodo} />
-      <Todos todos={todos} deleteTodo={deleteTodo} checkTodo={checkTodo} />
-      <Todos todos={checkedTodos} deleteTodo={deleteTodo} checkTodo={checkTodo} />
+    <div className="row">
+      <div className="col-3">Hello</div>
+      <div className="col-sm-12 col-md-9">
+        <div id="main">
+          <AddTodo addTodo={addTodo} />
+          <Todos todos={todos} deleteTodo={deleteTodo} checkTodo={checkTodo} />
+          <Todos todos={checkedTodos} deleteTodo={deleteTodo} checkTodo={checkTodo} />
+        </div>
+      </div>
     </div>
-  </div>;
+
+
+  </Container>;
 };
 
 export default Dashboard;
